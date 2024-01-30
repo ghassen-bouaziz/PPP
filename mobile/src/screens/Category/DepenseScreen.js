@@ -4,11 +4,17 @@ import { categoriesExpensesList } from "../../assets/data/categories";
 import CategoryCmp from "./components/CategoryCmp";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { colors } from "../../style/colors";
+import { useNavigation } from "@react-navigation/native";
 
-const DepenseScreen = () => {
+const DepenseScreen = (props) => {
+  const { data = [] } = props;
+  const navigation = useNavigation();
   return (
     <View className="flex-1 py-4 bg-border">
-      <Pressable className="flex-row items-center p-3 bg-background my-[2px]">
+      <Pressable
+        onPress={() => navigation?.navigate("AddCategorie")}
+        className="flex-row items-center p-3 bg-background my-[2px]"
+      >
         <View className="bg-green rounded-full p-[0.5px]">
           <AntDesign name="plus" size={20} color={colors.background} />
         </View>
@@ -18,7 +24,7 @@ const DepenseScreen = () => {
         </Text>
       </Pressable>
       <FlatList
-        data={categoriesExpensesList}
+        data={data}
         renderItem={({ item }) => <CategoryCmp data={item} type="depense" />}
         keyExtractor={(_, index) => `cat_${index}`}
       />

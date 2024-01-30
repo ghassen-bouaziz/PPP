@@ -6,7 +6,7 @@ import {
   Pressable,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   categoriesExpensesList,
   categoriesIncomeList,
@@ -15,16 +15,37 @@ import CategoryCmp from "./components/CategoryCmp";
 import IncomeScreen from "./IncomeScreen";
 import DepenseScreen from "./DepenseScreen";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import API from "../../services/api";
+import { useIsFocused } from "@react-navigation/native";
 
 const CategoryScreen = () => {
   const Tab = createMaterialTopTabNavigator();
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const isFocused = useIsFocused();
+  async function getPage() {
+    try {
+      setLoading(true);
+      const result = await API.get("/categories");
+      setCategories(result);
+    } catch (error) {
+      console.log("🚀 ~ getPage ~ error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+    getPage();
+
+    return () => {};
+  }, [isFocused]);
 
   const [showType, setShowType] = useState("income");
   return (
     <SafeAreaView className="flex-1">
       <Tab.Navigator>
-        <Tab.Screen name="IncomeScreen" component={IncomeScreen} />
-        <Tab.Screen name="DepenseScreen" component={DepenseScreen} />
+        <Tab.Screen name="IncomeScreen" children={ (props)=><IncomeScreen  {...props} data={categories?.filter(item=>item?.type === "+")} />} />
+        <Tab.Screen name="DepenseScreen" children={ (props)=><DepenseScreen {...props} data={categories?.filter(item=>item?.type === "-")}  />} />
       </Tab.Navigator>
 
       {/* <ScrollView
