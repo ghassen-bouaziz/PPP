@@ -1,19 +1,18 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const jwtUtils = require('../auth/jwtUtils');
 
-// Middleware pour vérifier l'authentification
 exports.authenticateUser = (req, res, next) => {
     const token = req.header('Authorization');
 
     if (!token) {
-        return res.status(401).json({ message: 'Accès non autorisé. Token manquant.' });
+        return res.status(401).json({ message: 'Unauthorized. Token missing.' });
     }
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded.user;
-        next();
-    } catch (error) {
-        res.status(401).json({ message: 'Token invalide.' });
+    const user = jwtUtils.verifyToken(token.replace('Bearer ', ''));
+
+    if (!user) {
+        return res.status(401).json({ message: 'Unauthorized. Invalid token.' });
     }
+
+    req.user = user;
+    next();
 };
