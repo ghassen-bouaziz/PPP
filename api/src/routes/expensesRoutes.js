@@ -1,12 +1,12 @@
-import { Router } from 'express';
-const router = Router();
-import { createExpense, getAllExpenses, getExpenseById, updateExpense, deleteExpense } from '../controllers/expensesController';
-import verifyToken from '../auth/authMiddleware';
+const express = require('express');
+const router = express.Router();
+const expensesController = require('../controllers/expensesController');
+const authMiddleware = require('../auth/authMiddleware');
 
-router.post('/', verifyToken, createExpense);
-router.get('/', verifyToken, getAllExpenses);
-router.get('/:id', verifyToken, getExpenseById);
-router.put('/:id', verifyToken, updateExpense);
-router.delete('/:id', verifyToken, deleteExpense);
+// Récupérer toutes les dépenses
+router.get('/', authMiddleware.authenticateUser, expensesController.getAllExpenses);
 
-export default router;
+// Ajouter une nouvelle dépense
+router.post('/', authMiddleware.authenticateUser, expensesController.addExpense);
+
+module.exports = router;
