@@ -6,6 +6,7 @@ import AddCategorie from "../screens/Category/AddCategorie";
 import { Pressable, Text } from "react-native";
 import { colors } from "../style/colors";
 import HeaderCmp from "../components/HeaderCmp";
+import AddExpenseScreen from "../screens/Expenses/AddExpenseScreen";
 
 const AppNavigation = () => {
   const AppStack = createNativeStackNavigator();
@@ -18,6 +19,13 @@ const AppNavigation = () => {
           component={AddCategorie}
           options={{
             header: () => <HeaderCmp label={"Ajouter nouvelle catégorie"} />,
+          }}
+        />
+        <AppStack.Screen
+          name="AddExpenseScreen"
+          component={AddExpenseScreen}
+          options={{
+            header: () => <HeaderCmp label={"Ajouter nouvelle dépense"} />,
           }}
         />
       </AppStack.Navigator>

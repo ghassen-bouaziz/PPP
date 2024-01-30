@@ -14,6 +14,11 @@ import {
   Cairo_900Black,
 } from "@expo-google-fonts/cairo";
 import AppNavigation from "./src/navigations/AppNavigation";
+import { MD3LightTheme, PaperProvider } from 'react-native-paper';
+
+import { colors } from "./src/style/colors";
+import moment from 'moment'
+import 'moment/locale/fr'
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -26,12 +31,15 @@ export default function App() {
     Cairo_800ExtraBold,
     Cairo_900Black,
   });
+  moment.locale('es')
 
   if (!fontsLoaded) {
     return <AppLoading />;
   }
   return (
-    <AppNavigation />
+    <PaperProvider >
+      <AppNavigation />
+    </PaperProvider>
     // <View style={styles.container}>
     // <StatusBar style="dark" />
     // </View>

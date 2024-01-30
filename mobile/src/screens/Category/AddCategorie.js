@@ -27,10 +27,10 @@ const AddCategorie = () => {
     setLoading(true);
     try {
       const result = await API.post("/categories", payload);
-      console.log("🚀 ~ submit ~ result:", result)
+      console.log("🚀 ~ submit ~ result:", result);
     } catch (error) {
       console.log("🚀 ~ submit ~ error:", error);
-      !!error?.message && Alert.alert(error?.message)
+      !!error?.message && Alert.alert(error?.message);
     } finally {
       setLoading(false);
       navigation?.goBack();

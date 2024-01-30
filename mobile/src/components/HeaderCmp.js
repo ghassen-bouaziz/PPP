@@ -16,7 +16,7 @@ const HeaderCmp = (props) => {
         <AntDesign name="arrowleft" size={24} color={colors.primary} />
       </Pressable>
       <Text className="text-primary font-500Medium text-base">{label}</Text>
-      <View />
+      <View className="w-12" />
     </View>
   );
 };
