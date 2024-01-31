@@ -64,7 +64,7 @@ const TabNavigator = () => {
             style={styles.button}
             onPress={() => navigation?.navigate("AddExpenseScreen")}
           >
-            <AntDesign name="addfile" size={24} color="black" />
+            <AntDesign name="addfile" size={24} color={colors.background} />
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -111,7 +111,8 @@ export const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#E8E8E8",
+    // backgroundColor: "#E8E8E8",
+    backgroundColor :colors.primary,
     bottom: 30,
     shadowColor: "#000",
     shadowOffset: {

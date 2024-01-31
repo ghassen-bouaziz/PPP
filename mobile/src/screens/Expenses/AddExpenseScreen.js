@@ -1,33 +1,62 @@
-import { View, Text, Pressable, Modal, Platform } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Modal,
+  Platform,
+  TextInput,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState } from "react";
-import { TextInput } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
 import moment from "moment/moment";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import { colors } from "../../style/colors";
+import API from "../../services/api";
+import { useNavigation } from "@react-navigation/native";
 
 const AddExpenseScreen = () => {
+  const navigation = useNavigation();
   const [payload, setPayload] = useState({
     amount: "",
-    category: "",
+    categoryId: "65b957b3328c5fec362b4cdb",
     date: new Date(),
     description: "",
+    type: "+",
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [loading, setLoading] = useState(false);
   function handleChange(key, value) {
     setPayload((prev) => ({ ...prev, [key]: value }));
   }
+
+  async function submit() {
+    if (!payload?.amount && !payload.category) return;
+    setLoading(true);
+    try {
+      const result = await API.post("/expenses", payload);
+    } catch (error) {
+      console.log("🚀 ~ submit ~ error:", error);
+    } finally {
+      setLoading(false);
+      navigation?.goBack();
+    }
+  }
   return (
-    <View className="flex-1 p-4">
-      <View className="flex-row items-center justify-between my-2">
-        <View className="items-center justify-center p-2 h-16 border-textSecondary bg-background border-3 w-2/12 rounded-lg">
-          <Text className="text-textPrimary font-700Bold text-xl">TND</Text>
+    <View className="flex-1 h-full p-4">
+      <View className="flex-row items-center justify-between my-2 bg-background shadow-lg rounded-lg h-16">
+        <View className="items-center justify-center border-textSecondary border-3 w-2/12 rounded-lg h-full">
+          <Text className="text-textSecondary font-600SemiBold text-xl">
+            TND
+          </Text>
         </View>
         <TextInput
-          label="Montant"
+          placeholder="Montant"
           value={payload?.amount}
           onChangeText={(text) => handleChange("amount", text)}
-          className="bg-background rounded-lg shadow-md w-9/12  h-16"
+          className="p-4 w-10/12  h-16"
+          placeholderTextColor={colors.textSecondary}
           inputMode="decimal"
           keyboardType="decimal-pad"
         />
@@ -43,9 +72,36 @@ const AddExpenseScreen = () => {
         onPress={() => setShowDatePicker(true)}
         className="p-4 bg-background rounded-lg flex-row items-center justify-between my-2"
       >
-        <AntDesign name="calendar" size={24} color="black" />
+        <AntDesign name="calendar" size={24} color={colors.textSecondary} />
         <Text>{moment(payload?.date)?.format("dddd, DD MMMM YYYY")}</Text>
         <View />
+      </Pressable>
+
+      <Pressable
+        onPress={() => setShowDatePicker(true)}
+        className="p-4 bg-background rounded-lg flex-row items-center justify-between my-2"
+      >
+        <AntDesign name="infocirlceo" size={24} color={colors.textSecondary} />
+        <TextInput
+          className="w-11/12 px-3 text-textPrimary font-400Regular text-sm h-full items-center"
+          placeholder="Déscription"
+          placeholderTextColor={colors.textSecondary}
+          value={payload?.description}
+          onChangeText={(text) => handleChange("description", text)}
+        />
+      </Pressable>
+      <View className="flex-1" />
+      <Pressable
+        onPress={submit}
+        className="m-4 w-11/12 bg-primary items-center justify-center p-2 rounded-xl"
+      >
+        {loading ? (
+          <ActivityIndicator color={colors.background} />
+        ) : (
+          <Text className="text-base font-800ExtraBold text-background">
+            Ajouter
+          </Text>
+        )}
       </Pressable>
 
       {showDatePicker && (
@@ -82,8 +138,8 @@ const AddExpenseScreen = () => {
                   value={new Date()}
                   onChange={(event, selectedDate) => {
                     // handleDateChange(event, selectedDate);
-                    handleChange("date",selectedDate)
-                    setShowDatePicker(false)
+                    handleChange("date", selectedDate);
+                    setShowDatePicker(false);
                   }}
                   onTouchCancel={() => {
                     setShowDatePicker(false);

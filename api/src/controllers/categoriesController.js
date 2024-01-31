@@ -1,4 +1,5 @@
 const Category = require("../models/Category");
+const Expense = require("../models/Expense");
 
 // Get all categories
 exports.getAllCategories = async (req, res) => {
@@ -81,5 +82,43 @@ exports.deleteCategory = async (req, res) => {
     res.json({ message: "Category deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getAllCategoriesWithExpenses = async (req, res) => {
+  try {
+      const categories = await Category.find();
+
+      // Fetch total expenses for each category
+      const categoriesWithExpenses = await Promise.all(
+          categories.map(async (category) => {
+              const expenses = await Expense.find({ category: category._id });
+              const totalSum = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+              // Calculate percentage
+              const totalExpenses = await Expense.aggregate([
+                  {
+                      $group: {
+                          _id: null,
+                          total: { $sum: '$amount' },
+                      },
+                  },
+              ]);
+
+              const percentage = totalExpenses.length > 0
+                  ? (totalSum / totalExpenses[0].total) * 100
+                  : 0;
+
+              return {
+                  category,
+                  totalSum,
+                  percentage,
+              };
+          })
+      );
+
+      res.json(categoriesWithExpenses);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
   }
 };

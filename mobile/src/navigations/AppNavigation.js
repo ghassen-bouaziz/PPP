@@ -13,7 +13,13 @@ const AppNavigation = () => {
   return (
     <NavigationContainer>
       <AppStack.Navigator initialRouteName="TabStack">
-        <AppStack.Screen name="TabStack" component={TabNavigator} />
+        <AppStack.Screen
+          name="TabStack"
+          component={TabNavigator}
+          options={{
+            headerShown: false,
+          }}
+        />
         <AppStack.Screen
           name="AddCategorie"
           component={AddCategorie}

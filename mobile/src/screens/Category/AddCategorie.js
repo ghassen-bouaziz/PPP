@@ -27,7 +27,6 @@ const AddCategorie = () => {
     setLoading(true);
     try {
       const result = await API.post("/categories", payload);
-      console.log("🚀 ~ submit ~ result:", result);
     } catch (error) {
       console.log("🚀 ~ submit ~ error:", error);
       !!error?.message && Alert.alert(error?.message);
@@ -95,12 +94,12 @@ const AddCategorie = () => {
       <View className="flex-1" />
       <Pressable
         onPress={submit}
-        className="m-4 w-11/12 bg-primary items-center justify-center p-4 rounded-xl"
+        className="m-4 w-11/12 bg-primary items-center justify-center p-2 rounded-xl"
       >
         {loading ? (
           <ActivityIndicator color={colors.background} />
         ) : (
-          <Text className="text-base font-500Medium text-background">
+          <Text className="text-base font-800ExtraBold text-background">
             Ajouter
           </Text>
         )}

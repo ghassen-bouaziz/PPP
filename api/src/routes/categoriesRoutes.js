@@ -7,6 +7,8 @@ const authMiddleware = require('../auth/authMiddleware');
 // Get all categories
 router.get('/',  categoriesController.getAllCategories);
 
+router.get('/allWithExpenses', categoriesController.getAllCategoriesWithExpenses);
+
 // Get a specific category by ID
 router.get('/:id',  categoriesController.getCategoryById);
 

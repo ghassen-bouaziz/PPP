@@ -24,18 +24,26 @@ exports.getExpenseById = async (req, res) => {
     }
 };
 
-// Add a new expense
 exports.addExpense = async (req, res) => {
     try {
-        const { amount, category, date, description } = req.body;
+        const { amount, categoryId, date, description } = req.body;
 
         // Check if the category exists
-        const existingCategory = await Category.findById(category);
-        if (!existingCategory) {
+        const category = await Category.findById(categoryId);
+        if (!category) {
             return res.status(400).json({ message: 'The specified category does not exist.' });
         }
 
-        const newExpense = new Expense({ amount, category, date, description });
+        // Determine the sign based on the category type
+        const sign = category?.type === '+' ? 1 : -1;
+
+        const newExpense = new Expense({
+            amount: amount * sign,
+            category: categoryId,
+            date,
+            description,
+        });
+
         await newExpense.save();
 
         res.status(201).json(newExpense);
