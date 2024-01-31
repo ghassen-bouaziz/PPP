@@ -31,15 +31,14 @@ exports.addCategory = async (req, res) => {
       name,
       type,
       description,
-      //  imageUrl
+      imageUrl = "https://uxwing.com/wp-content/themes/uxwing/download/arts-graphic-shapes/star-icon.png",
     } = req.body;
 
     const newCategory = new Category({
       name,
       type,
       description,
-      imageUrl:
-        "https://uxwing.com/wp-content/themes/uxwing/download/arts-graphic-shapes/star-icon.png",
+      imageUrl,
     });
     await newCategory.save();
 
@@ -87,38 +86,42 @@ exports.deleteCategory = async (req, res) => {
 
 exports.getAllCategoriesWithExpenses = async (req, res) => {
   try {
-      const categories = await Category.find();
+    const categories = await Category.find();
 
-      // Fetch total expenses for each category
-      const categoriesWithExpenses = await Promise.all(
-          categories.map(async (category) => {
-              const expenses = await Expense.find({ category: category._id });
-              const totalSum = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    // Fetch total expenses for each category
+    const categoriesWithExpenses = await Promise.all(
+      categories.map(async (category) => {
+        const expenses = await Expense.find({ category: category._id });
+        const totalSum = expenses.reduce(
+          (sum, expense) => sum + expense.amount,
+          0
+        );
 
-              // Calculate percentage
-              const totalExpenses = await Expense.aggregate([
-                  {
-                      $group: {
-                          _id: null,
-                          total: { $sum: '$amount' },
-                      },
-                  },
-              ]);
+        // Calculate percentage
+        const totalExpenses = await Expense.aggregate([
+          {
+            $group: {
+              _id: null,
+              total: { $sum: "$amount" },
+            },
+          },
+        ]);
 
-              const percentage = totalExpenses.length > 0
-                  ? (totalSum / totalExpenses[0].total) * 100
-                  : 0;
+        const percentage =
+          totalExpenses.length > 0
+            ? (totalSum / totalExpenses[0].total) * 100
+            : 0;
 
-              return {
-                  category,
-                  totalSum,
-                  percentage,
-              };
-          })
-      );
+        return {
+          category,
+          totalSum,
+          percentage,
+        };
+      })
+    );
 
-      res.json(categoriesWithExpenses);
+    res.json(categoriesWithExpenses);
   } catch (error) {
-      res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };

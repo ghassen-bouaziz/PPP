@@ -56,12 +56,11 @@ export default function HomeScreen() {
     try {
       setLoadingCatExp(true);
       const result = await API.get("/categories/allWithExpenses");
-      console.log("🚀 ~ getExpenses ~ result:", result);
       if (!result?.message) {
-        const labels = result?.map((item) => item?.category?.name).slice(0, 4);
+        const labels = result?.map((item) => item?.category?.name).slice(0, 3);
         const data = result
           ?.map((item) => (isNaN(item?.percentage) ? 0 : item?.percentage))
-          .slice(0, 4);
+          .slice(0, 3);
         setTotal(result?.reduce((p, c) => p + c?.totalSum, 0));
         setCategoriesWithExpenses({ labels, data });
       }
@@ -84,7 +83,13 @@ export default function HomeScreen() {
         contentContainerStyle={{ flexGrow: 1 }}
         className="flex-1 h-full bg-background"
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={getExpenses} />
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={() => {
+              getExpenses();
+              getCategoriesExpenses();
+            }}
+          />
         }
       >
         <View className="bg-[#F4F6F8] w-full rounded-t-2xl p-4 items-center justify-center ">

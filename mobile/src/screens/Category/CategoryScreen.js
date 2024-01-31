@@ -44,8 +44,8 @@ const CategoryScreen = () => {
   return (
     <SafeAreaView className="flex-1">
       <Tab.Navigator>
-        <Tab.Screen name="IncomeScreen" children={ (props)=><IncomeScreen  {...props} data={categories?.filter(item=>item?.type === "+")} />} />
-        <Tab.Screen name="DepenseScreen" children={ (props)=><DepenseScreen {...props} data={categories?.filter(item=>item?.type === "-")}  />} />
+        <Tab.Screen name="Incomes" children={ (props)=><IncomeScreen  {...props} data={categories?.filter(item=>item?.type === "+")} />} />
+        <Tab.Screen name="Depenses" children={ (props)=><DepenseScreen {...props} data={categories?.filter(item=>item?.type === "-")}  />} />
       </Tab.Navigator>
 
       {/* <ScrollView

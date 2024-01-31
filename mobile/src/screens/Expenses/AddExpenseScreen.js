@@ -6,6 +6,7 @@ import {
   Platform,
   TextInput,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
@@ -15,6 +16,7 @@ import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { colors } from "../../style/colors";
 import API from "../../services/api";
 import { useNavigation } from "@react-navigation/native";
+import SelectCategorieImageModal from "../../components/SelectCategorieImageModal";
 
 const AddExpenseScreen = () => {
   const navigation = useNavigation();
@@ -25,8 +27,10 @@ const AddExpenseScreen = () => {
     description: "",
     type: "+",
   });
+  const [selectedOrg, setSelectedOrg] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showSelectCatMdl, setShowSelectCatMdl] = useState(false);
   function handleChange(key, value) {
     setPayload((prev) => ({ ...prev, [key]: value }));
   }
@@ -37,7 +41,6 @@ const AddExpenseScreen = () => {
     try {
       const result = await API.post("/expenses", payload);
     } catch (error) {
-      console.log("🚀 ~ submit ~ error:", error);
     } finally {
       setLoading(false);
       navigation?.goBack();
@@ -61,13 +64,32 @@ const AddExpenseScreen = () => {
           keyboardType="decimal-pad"
         />
       </View>
-      <View className="p-4 bg-background rounded-lg flex-row items-center justify-between my-2">
-        <View className="h-8 w-8 bg-border rounded-full" />
-        <Text>Choisissiez une catégorie</Text>
+      <Pressable
+        onPress={() => setShowSelectCatMdl(true)}
+        className="p-4 bg-background rounded-lg flex-row items-center justify-between my-2"
+      >
+        {selectedOrg?.imageUrl ? (
+          <Image
+            source={{ uri: selectedOrg?.imageUrl }}
+            className="h-10 w-10"
+            resizeMode="contain"
+          />
+        ) : (
+          <View className="h-8 w-8 bg-border rounded-full" />
+        )}
+        {selectedOrg?.name ? (
+          <Text className="text-lg text-textPrimary font-600SemiBold">
+            {selectedOrg?.name}
+          </Text>
+        ) : (
+          <Text className="text-lg text-textSecondary font-600SemiBold">
+            Choisissiez une catégorie
+          </Text>
+        )}
         <Pressable>
           <AntDesign name="arrowright" size={24} color="grey" />
         </Pressable>
-      </View>
+      </Pressable>
       <Pressable
         onPress={() => setShowDatePicker(true)}
         className="p-4 bg-background rounded-lg flex-row items-center justify-between my-2"
@@ -116,9 +138,10 @@ const AddExpenseScreen = () => {
               <RNDateTimePicker
                 mode="date"
                 value={new Date()}
-                onChange={(event, selectedDate) =>
-                  handleDateChange(event, selectedDate)
-                }
+                onChange={(event, selectedDate) => {
+                  handleChange("date", selectedDate);
+                  // handleDateChange(event, selectedDate);
+                }}
                 onTouchCancel={() => {
                   setShowDatePicker(false);
                 }}
@@ -149,6 +172,17 @@ const AddExpenseScreen = () => {
             </Pressable>
           )}
         </Modal>
+      )}
+      {showSelectCatMdl && (
+        <SelectCategorieImageModal
+          visible={showSelectCatMdl}
+          setVisible={setShowSelectCatMdl}
+          selected={selectedOrg}
+          submit={(item) => {
+            setSelectedOrg(item);
+            handleChange("categoryId", item?._id);
+          }}
+        />
       )}
     </View>
   );

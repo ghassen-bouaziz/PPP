@@ -5,11 +5,18 @@ import {
   Pressable,
   ActivityIndicator,
   Alert,
+  FlatList,
+  StyleSheet,
+  Modal,
+  Image,
 } from "react-native";
 import React, { useState } from "react";
 import { colors } from "../../style/colors";
 import { useNavigation } from "@react-navigation/native";
 import API from "../../services/api";
+import { AntDesign } from "@expo/vector-icons";
+import catImages from "../../../assets/catImages";
+import SelectImageModal from "./components/SelectImageModal";
 
 const AddCategorie = () => {
   const navigation = useNavigation();
@@ -27,6 +34,7 @@ const AddCategorie = () => {
     setLoading(true);
     try {
       const result = await API.post("/categories", payload);
+      console.log("🚀 ~ submit ~ result:", result);
     } catch (error) {
       console.log("🚀 ~ submit ~ error:", error);
       !!error?.message && Alert.alert(error?.message);
@@ -35,6 +43,7 @@ const AddCategorie = () => {
       navigation?.goBack();
     }
   }
+  const [showImgMdl, setShowImgMdl] = useState(false);
   return (
     <View className="flex-1 p-4">
       <View className="w-full items-center justify-center flex-row my-3">
@@ -83,14 +92,21 @@ const AddCategorie = () => {
           className="h-16 items-center p-3 rounded-xl bg-background shadow-lg text-textPrimary text-sm font-400Regular"
         />
       </View>
-      <View className="my-2">
-        <TextInput
-          value={payload?.imageUrl}
-          onChangeText={(text) => handleChange("imageUrl", text)}
-          placeholder="Url image catégorie"
-          className="h-16 items-center p-3 rounded-xl bg-background shadow-lg text-textPrimary text-sm font-400Regular"
-        />
-      </View>
+      <Pressable
+        onPress={() => setShowImgMdl(true)}
+        className="flex-row items-center justify-between my-2 rounded-xl bg-background shadow-lg p-4"
+      >
+        <Text className="text-textPrimary font-500Medium text-base">Image</Text>
+        {payload?.imageUrl ? (
+          <Image
+            source={{ uri: payload?.imageUrl }}
+            className="h-12 w-12"
+            resizeMode="contain"
+          />
+        ) : (
+          <AntDesign name="arrowright" size={24} color="grey" />
+        )}
+      </Pressable>
       <View className="flex-1" />
       <Pressable
         onPress={submit}
@@ -104,6 +120,15 @@ const AddCategorie = () => {
           </Text>
         )}
       </Pressable>
+      {showImgMdl && (
+        <SelectImageModal
+          visible={showImgMdl}
+          setVisible={setShowImgMdl}
+          submit={(item) => {
+            handleChange("imageUrl", item);
+          }}
+        />
+      )}
     </View>
   );
 };

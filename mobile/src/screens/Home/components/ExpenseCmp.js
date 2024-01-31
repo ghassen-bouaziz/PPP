@@ -4,12 +4,13 @@ import moment from "moment";
 
 const ExpenseCmp = (props) => {
   const { data } = props;
+  const plus = data?.category?.type !== "-"
   return (
     <View className="w-11/12 self-center p-4 bg-backgroundSecondary my-2 rounded-lg flex-row items-center justify-between">
       <Image
         source={{ uri: data?.category?.imageUrl }}
         className="h-10 w-10"
-        resizeMode="cover"
+        resizeMode="contain"
       />
       <View className="w-2" />
 
@@ -23,8 +24,8 @@ const ExpenseCmp = (props) => {
       </View>
       <View className="flex-1" />
       <View className="items-end">
-        <Text className="text-lg text-textPrimary font-700Bold">
-          {data?.category?.type} {data?.amount}
+        <Text className={`text-lg font-700Bold ${plus ? "text-green " :"text-orange "}`}>
+          {plus && data?.category?.type} {data?.amount}
         </Text>
         <Text className="text-textSecondary text-xs font-400Regular">
           {moment(data?.date)?.format("dddd , DD MMM")}

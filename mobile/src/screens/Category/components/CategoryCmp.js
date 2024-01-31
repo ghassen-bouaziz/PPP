@@ -12,7 +12,7 @@ export default function CategoryCmp(props) {
       /> */}
       <Image source={{ uri: data?.imageUrl }}
       className="h-10 w-10 "
-      resizeMode="cover"
+      resizeMode="contain"
       />
       <View className="w-4" />
       <View>
